@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> IoTHome WebServer</title>
+        <link rel="stylesheet" type="text/css" href="smink.css" />
+        <script type="text/javascript" src="Scripts.js"></script>
+    </head>
+
+    <body>
+        <section id="main_section">
+            <img id="mic" src="mic.png" width="32" height="32"> 
+            <div id="ShowDiv"></div><br>
+            <div id="AddDiv"></div><br>
+            <div id="RemoveDiv"></div><br>
+            <div id="TestDiv"></div><br>
+            <div id="EventDiv">
+                <div id="SrcEvent">
+                    <label>Choose Trigger</label>
+                    <br>
+                    <input type="radio" name="srcRadio" value="Node" onclick="changeTriggerEvent(this)" style.display="none">
+                    <label>Node</label>
+                    <br>
+                    <input type="radio" name="srcRadio" value="Timer" onclick="changeTriggerEvent(this)">
+                    <label>Timer</label>
+                    <br>
+                    <input type="radio" name="srcRadio" value="Speech" onclick="changeTriggerEvent(this)">
+                    <label>Speech</label>
+                    <br><br>
+                    <div id="SrcEventNode"></div>
+                    <div id="SrcEventTimer"></div>
+                    <div id="SrcEventSpeech"></div>
+                    <br>
+                    <input id="SrcEventInput" placeholder="Event trigger name">
+                    <button id="AddSrcEventBtn" onclick="addSourceTrigger()">Add Source</button>
+                </div>
+                <div id="DesEvent"></div>
+                <div id="Events">
+                    <button id="EventAdd" onclick="addEvent()">Create Event</button>
+                    <div id="SrcNodes">Src</div>
+                    <div id="DesNodes">Des</div>
+                </div>
+                
+            </div>
+        </section>
+        
+        <script>
+        startGetNodes()
+        setupMic()
+        </script>
+    </body>
+</html>

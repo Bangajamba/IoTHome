@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+    iothome:
+        image: bangajamba/iothome
+        container_name: iothome
+        ports:
+         - "1883:1883"
+         - "8080:8080"
+        
+    iotwebserver:
+        image: bangajamba/iotwebserver
+        container_name: iotwebserver
+        ports:
+         - "80:80"
+        
+    influxdb:
+        image: influxdb:1.5 
+        container_name: influxdb
+        environment:
+         - INFLUXDB_DB="iot"
+         - INFLUXDB_ADMIN_ENABLED=true
+         - INFLUXDB_ADMIN_USER="admin"
+         - INFLUXDB_ADMIN_PASSWORD="secretpassword"
+        ports:
+         - "8083:8083"
+         - "8086:8086"
+        volumes:
+         - ~/docker/influxdb:/var/lib/influxdb
+         
+    grafana:
+        image: grafana/grafana
+        container_name: grafana
+        ports:
+         - "3000:3000"
+        volumes:
+         - grafana-db:/var/lib/grafana
+         - grafana-log:/var/log/grafana
+         - grafana-conf:/etc/grafana
+         
+volumes:
+  grafana-db:
+    driver: local  
+  grafana-log:
+    driver: local
+  grafana-conf:
+    driver: local
+         
+         

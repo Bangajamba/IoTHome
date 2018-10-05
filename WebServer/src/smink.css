@@ -1,0 +1,37 @@
+body{
+    max-width: 800px;
+    margin: auto;
+}
+
+#SrcEvent{
+    background: lightgrey;
+    width: 35%;
+    float: left;
+}
+#DesEvent{
+    background: grey;
+    width: 25%;
+    float: left;
+}
+
+#Events{
+    background: greenyellow;
+    width: 40%;
+    float: left;
+}
+
+#SrcNodes, #DesNodes{
+    width: 50%;
+    float: left;
+}
+
+#EventAdd{
+    display: block;
+    margin : auto;
+    width: 50%;
+}
+
+#SrcEventNode, #SrcEventTimer, #SrcEventSpeech{
+    display: none;
+}
+
