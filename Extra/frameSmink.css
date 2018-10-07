@@ -1,0 +1,10 @@
+.framediv{
+    width: 50%;
+    height: 1000px;
+    float: left;
+}
+
+.frame{
+    width: 100%;
+    height: 100%;
+}

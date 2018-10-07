@@ -20,12 +20,14 @@ class MqttHandler():
         self.nodeHandler = NodeHandler()
 
         # MqttCommuncation
+        self.mqttConnected = False #not in use
         self.connectMqtt()
-        self.mqttConnected = False
+        
 
         #InfluxDB
-        self.connectInflexDB()
-        self.inflexConnected = False
+        self.inflexConnected = False #not in use
+        self.connectInflexDB() 
+        
 
 
     def connectMqtt(self):
@@ -40,17 +42,19 @@ class MqttHandler():
             self.t = Thread(target = self.listenClient.loop_forever)
             self.t.daemon = True
             self.t.start()
+            logging.info("MqttServer Done")
 
             # MqttClient used for send message(publish)
             self.client = mqtt.Client()
             self.client.connect(self.ip, 1883, 60)
             self.mqttConnected = True
+            logging.info("MqttClient Done")
         except:
             logging.info("Failed Connect Mqtt")
         
     def connectInflexDB(self):
         try:
-            self.influx_client = InfluxDBClient(self.ip, 8086, database='iot')
+            self.influx_client = InfluxDBClient(self.ip, 8086, username='admin', password='secretpassword',database='iot')
             self.inflexConnected = True
         except:
             logging.info("Failed Connect InflexDB")
@@ -77,11 +81,10 @@ class MqttHandler():
             }
         ]
         try:
-            print(json_body)
-            self.influx_client.write_points(json_body)
             logging.info(json_body)
+            self.influx_client.write_points(json_body)
         except Exception as e:
-            logging.info(str(e))
+            logging.info("fail write to influx:" + str(e))
     
     def returnValue(self, strValue):
         result = strValue

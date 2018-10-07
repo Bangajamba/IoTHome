@@ -7,13 +7,26 @@ services:
         ports:
          - "1883:1883"
          - "8080:8080"
+        networks: 
+          - iotnetwork
+            #ipv4_address: 172.18.0.2
         
     iotwebserver:
         image: bangajamba/iotwebserver
         container_name: iotwebserver
         ports:
          - "80:80"
-        
+        networks: 
+          - iotnetwork
+
+    iotdisplayframe:
+        image: bangajamba/iotdisplayframe
+        container_name: iotdisplayframe
+        ports:
+         - "8001:80"
+        networks: 
+          - iotnetwork
+    
     influxdb:
         image: influxdb:1.5 
         container_name: influxdb
@@ -27,6 +40,9 @@ services:
          - "8086:8086"
         volumes:
          - ~/docker/influxdb:/var/lib/influxdb
+        networks: 
+          - iotnetwork
+         
          
     grafana:
         image: grafana/grafana
@@ -37,7 +53,18 @@ services:
          - grafana-db:/var/lib/grafana
          - grafana-log:/var/log/grafana
          - grafana-conf:/etc/grafana
-         
+        networks: 
+          - iotnetwork
+
+networks: 
+  iotnetwork:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+        #- gateway: 172.18.0.1
+
 volumes:
   grafana-db:
     driver: local  
@@ -45,5 +72,4 @@ volumes:
     driver: local
   grafana-conf:
     driver: local
-         
          
