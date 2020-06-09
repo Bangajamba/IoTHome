@@ -4,12 +4,12 @@ import argparse
 import logging
 import json
 #Custom Modules
-from Broker import Broker
+from IoTPlatform import IoTPlatform
 from EventHandler import EventHandler
 
 # Args
 parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('ip', action='store', default='127.0.0.1', type=str, help='ipaddres to connect')
+parser.add_argument('--ip', default='127.0.0.1', action='store', type=str, help='ipaddres to connect')
 args = parser.parse_args()
 
 IPAddress = args.ip
@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 logging.info("StartCreate")
 
 # Creating Custom Classes
-broker = Broker(IPAddress)
+iotPlatform = IoTPlatform(IPAddress)
 eventHandler = EventHandler()
 
 class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):
@@ -55,15 +55,19 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         result = "Not Implemented"
 
         if command == "GetNodes":
-            result = broker.getNodes()
+            result = iotPlatform.getNodes()
         elif command == "Add":
-            broker.addNodeAndSaveFile(msg['msg'].split(",")[0])
+            iotPlatform.addNodeAndSaveFile(msg['msg'].split(",")[0])
             result = "Added"
         elif command == "Remove":
             pass
         elif command == "Test":
-            msgs = msg['msg'].split(",")
-            broker.nodeSendPayload(msgs[0], msgs[1])
+            nodePos = msg['msg'].find(",")
+            nodeName = msg['msg'][0:nodePos]
+            msgs = [msg['msg'][nodePos+1:len(msg['msg'])]]
+            iotPlatform.nodeSendPayload(
+                str(nodeName), 
+                str(msgs))
             result = "Sent Message"
         elif command == "SpeechCall":
             pass
@@ -71,9 +75,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             src = msg['msg']['src']
             des = msg['msg']['des']
             eventID = eventHandler.addEvent(src, des)
-            broker.addTriggersToNodesAndSaveFile(src, eventID)
-            print(broker.getNodes())
-            pass
+            iotPlatform.addTriggersToNodesAndSaveFile(src, eventID)
+            print(iotPlatform.getNodes())
         else:
             result = "None"
         

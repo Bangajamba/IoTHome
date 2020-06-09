@@ -1,12 +1,12 @@
-from MqttHandler import MqttHandler
+from Broker import Broker
 from Node import Node
 import os
 import json
 
-class Broker():
+class IoTPlatform():
     def __init__(self, ip):
         self.nodesTxt = "./nodes.txt"
-        self.mqttHandler = MqttHandler(ip)
+        self.broker = Broker(ip)
         self.createFile()
         self.loadFromFile()
         
@@ -22,12 +22,11 @@ class Broker():
 
         fileData = "{"
 
-        tempString = self.mqttHandler.nodeHandler.convertJson()
+        tempString = self.broker.nodeHandler.convertJson()
         if tempString == "":
             fileData += '"MQTT": []'
         else:
             fileData += '"MQTT":[' + tempString + "]"
-
 
         fileData += "}"
         file.write(fileData)
@@ -36,21 +35,20 @@ class Broker():
     
     def loadFromFile(self):
         file = json.load(open(self.nodesTxt))
-
         for mqtt in file['MQTT']:
-            self.mqttHandler.nodeHandler.add(Node(mqtt['name'], mqtt['ID'], mqtt['lastSendMsg'], mqtt['lastReceivedMsg'], mqtt['triggerEvents']))
+            self.broker.nodeHandler.add(Node(mqtt['name'], mqtt['ID'], mqtt['lastSendMsg'], mqtt['lastReceivedMsg'], mqtt['triggerEvents']))
 
     def addNodeAndSaveFile(self, name):
-        self.mqttHandler.nodeHandler.add(Node(name))
+        self.broker.nodeHandler.add(Node(name))
         self.saveToFile()
         pass
 
     def nodeSendPayload(self, name, payload):
-        self.mqttHandler.sendPayload(name, payload)
+        self.broker.sendPayload(name, payload)
 
     def getNodes(self):
-        return  '{"MQTT":[' + self.mqttHandler.nodeHandler.convertJson() + "]}"
+        return  '{"MQTT":[' + self.broker.nodeHandler.convertJson() + "]}"
 
     def addTriggersToNodesAndSaveFile(self, src, eventID):
-        self.mqttHandler.nodeHandler.addTriggersToNodes(src, eventID)
+        self.broker.nodeHandler.addTriggersToNodes(src, eventID)
         self.saveToFile()
